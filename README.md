@@ -1,6 +1,6 @@
-# ROCCA: an efficient AES-based encryption scheme for beyond 5G
+# ROCCA: an efficient AES-based encryption scheme
 
-This is an implementation of [ROCCA](https://tosc.iacr.org/index.php/ToSC/article/download/8904/8480/), a very fast encryption scheme on platforms with AES-NI or ARM crypto extensions.
+This is an implementation of [ROCCA: an efficient AES-based encryption scheme for beyond 5G](https://tosc.iacr.org/index.php/ToSC/article/download/8904/8480/), a very fast authenticated encryption scheme optimized for platforms with AES-NI or ARM crypto extensions.
 
 ROCCA is key committing, has a 256 bit key size, a 128 bit nonce, processes 256 bit message blocks and outputs a 128 bit authentication tag.
 
