@@ -11,7 +11,7 @@ Benchmark results (2,4 GHz Core i9, single core):
        aes128-ocb:       6040 MiB/s
         aegis-256:       9297 MiB/s
        aegis-128l:      14084 MiB/s
-            rocca:      16284 MiB/s
+            rocca:      16284 MiB/s (130 Gb/s)
 ```
 
 **Warning:** this implementation is for benchmarking and testing purposes only.
