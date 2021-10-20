@@ -4,7 +4,7 @@ This is an implementation of [ROCCA: an efficient AES-based encryption scheme fo
 
 ROCCA is key committing, has a 256 bit key size, a 128 bit nonce, processes 256 bit message blocks and outputs a 128 bit authentication tag.
 
-Benchmark results (2,4 GHz Core i9, single core):
+Benchmark results (Macbook Pro, 2,4 GHz Core i9, single core):
 
 ```text
        aes256-ocb:       4681 MiB/s            
