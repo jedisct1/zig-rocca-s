@@ -177,7 +177,7 @@ pub const Rocca = struct {
         if (m.len % 32 != 0) {
             mem.set(u8, src[0..], 0);
             mem.copy(u8, src[0 .. m.len % 32], c[i .. i + m.len % 32]);
-            state.decLast(dst[0 .. m.len % 32], &src);
+            state.decLast(m[i .. i + m.len % 32], &src);
         }
         const computed_tag = state.mac(ad.len, m.len);
         var acc: u8 = 0;
