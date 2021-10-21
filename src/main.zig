@@ -1,6 +1,7 @@
 const std = @import("std");
 const assert = std.debug.assert;
 const crypto = std.crypto;
+const fmt = std.fmt;
 const mem = std.mem;
 const AesBlock = std.crypto.core.aes.Block;
 const AuthenticationError = std.crypto.errors.AuthenticationError;
@@ -10,7 +11,7 @@ const State = struct {
 
     const rounds = 20;
 
-    fn init(key: [32]u8, nonce: [16]u8) State {
+    fn init(key: [Rocca.key_length]u8, nonce: [Rocca.nonce_length]u8) State {
         var z0b: [16]u8 = undefined;
         var z1b: [16]u8 = undefined;
         mem.writeIntLittle(u128, &z0b, 0x428a2f98d728ae227137449123ef65cd);
@@ -196,6 +197,17 @@ pub const Rocca = struct {
 
 const testing = std.testing;
 
+test "empty test" {
+    const key = [_]u8{0} ** 32;
+    const nonce = [_]u8{0} ** 16;
+    var c = [_]u8{};
+    var tag: [Rocca.tag_length]u8 = undefined;
+    var expected_tag: [Rocca.tag_length]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_tag, "2ee37e014157fa6a24c80f13996c77bb");
+    Rocca.encrypt(&c, &tag, "", "", nonce, key);
+    try testing.expectEqualSlices(u8, &tag, &expected_tag);
+}
+
 test "basic test" {
     const key = [_]u8{0} ** 32;
     const nonce = [_]u8{0} ** 16;
@@ -211,4 +223,17 @@ test "basic test" {
     try Rocca.decrypt(m[0..], m[0..], tag, "associated data", nonce, key);
 
     try testing.expectEqual(m[0], 0x41);
+}
+
+test "test vector" {
+    const key = [_]u8{0} ** 32;
+    const nonce = [_]u8{0} ** 16;
+    const ad = [_]u8{0} ** 32;
+    var m = [_]u8{0} ** 64;
+    var tag: [Rocca.tag_length]u8 = undefined;
+    var expected_tag: [Rocca.tag_length]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_tag, "cc728c8baedd36f14cf8938e9e0719bf");
+    Rocca.encrypt(&m, &tag, &m, &ad, nonce, key);
+    try testing.expectEqualSlices(u8, &tag, &expected_tag);
+    try testing.expectEqual(m[0], 0x15);
 }
