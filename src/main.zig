@@ -65,24 +65,24 @@ const State = struct {
 
     fn dec(state: *State, dst: *[32]u8, src: *const [32]u8) void {
         const blocks = &state.blocks;
-        const msg0 = AesBlock.fromBytes(src[0..16]);
-        const msg1 = AesBlock.fromBytes(src[16..32]);
-        const tmp0 = blocks[1].encrypt(blocks[5]).xorBlocks(msg0);
-        const tmp1 = blocks[0].xorBlocks(blocks[4]).encrypt(blocks[2]).xorBlocks(msg1);
-        dst[0..16].* = tmp0.toBytes();
-        dst[16..32].* = tmp1.toBytes();
-        state.update(tmp0, tmp1);
+        const c0 = AesBlock.fromBytes(src[0..16]);
+        const c1 = AesBlock.fromBytes(src[16..32]);
+        const msg0 = blocks[1].encrypt(blocks[5]).xorBlocks(c0);
+        const msg1 = blocks[0].xorBlocks(blocks[4]).encrypt(blocks[2]).xorBlocks(c1);
+        dst[0..16].* = msg0.toBytes();
+        dst[16..32].* = msg1.toBytes();
+        state.update(msg0, msg1);
     }
 
     fn decLast(state: *State, dst: []u8, src: *const [32]u8) void {
         const blocks = &state.blocks;
-        const msg0 = AesBlock.fromBytes(src[0..16]);
-        const msg1 = AesBlock.fromBytes(src[16..32]);
-        const tmp0 = blocks[1].encrypt(blocks[5]).xorBlocks(msg0);
-        const tmp1 = blocks[0].xorBlocks(blocks[4]).encrypt(blocks[2]).xorBlocks(msg1);
+        const c0 = AesBlock.fromBytes(src[0..16]);
+        const c1 = AesBlock.fromBytes(src[16..32]);
+        const msg0 = blocks[1].encrypt(blocks[5]).xorBlocks(c0);
+        const msg1 = blocks[0].xorBlocks(blocks[4]).encrypt(blocks[2]).xorBlocks(c1);
         var padded: [32]u8 = undefined;
-        padded[0..16].* = tmp0.toBytes();
-        padded[16..32].* = tmp1.toBytes();
+        padded[0..16].* = msg0.toBytes();
+        padded[16..32].* = msg1.toBytes();
         mem.set(u8, padded[dst.len..], 0);
         mem.copy(u8, dst, padded[0..dst.len]);
         state.update(AesBlock.fromBytes(padded[0..16]), AesBlock.fromBytes(padded[16..32]));
@@ -218,7 +218,9 @@ test "basic test" {
     Rocca.encrypt(m[0..], &tag, m[0..], "associated data", nonce, key);
     try Rocca.decrypt(m[0..], m[0..], tag, "associated data", nonce, key);
 
-    try testing.expectEqual(m[0], 0x41);
+    for (m) |x| {
+        try testing.expectEqual(x, 0x41);
+    }
 }
 
 test "test vector 1" {
