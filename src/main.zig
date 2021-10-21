@@ -233,7 +233,9 @@ test "test vector" {
     var tag: [Rocca.tag_length]u8 = undefined;
     var expected_tag: [Rocca.tag_length]u8 = undefined;
     _ = try fmt.hexToBytes(&expected_tag, "cc728c8baedd36f14cf8938e9e0719bf");
+    var expected_c: [m.len]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_c, "15892f8555ad2db4749b90926571c4b8c28b434f277793c53833cb6e41a855291784a2c7fe374b34d875fdcbe84f5b88bf3f386f2218f046a84318565026d755");
     Rocca.encrypt(&m, &tag, &m, &ad, nonce, key);
     try testing.expectEqualSlices(u8, &tag, &expected_tag);
-    try testing.expectEqual(m[0], 0x15);
+    try testing.expectEqualSlices(u8, &m, &expected_c);
 }
