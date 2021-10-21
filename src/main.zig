@@ -12,12 +12,8 @@ const State = struct {
     const rounds = 20;
 
     fn init(key: [Rocca.key_length]u8, nonce: [Rocca.nonce_length]u8) State {
-        var z0b: [16]u8 = undefined;
-        var z1b: [16]u8 = undefined;
-        mem.writeIntLittle(u128, &z0b, 0x428a2f98d728ae227137449123ef65cd);
-        mem.writeIntLittle(u128, &z1b, 0xb5c0fbcfec4d3b2fe9b5dba58189dbbc);
-        const z0 = AesBlock.fromBytes(&z0b);
-        const z1 = AesBlock.fromBytes(&z1b);
+        const z0 = AesBlock.fromBytes(&[_]u8{ 205, 101, 239, 35, 145, 68, 55, 113, 34, 174, 40, 215, 152, 47, 138, 66 });
+        const z1 = AesBlock.fromBytes(&[_]u8{ 188, 219, 137, 129, 165, 219, 181, 233, 47, 59, 77, 236, 207, 251, 192, 181 });
         const k0 = AesBlock.fromBytes(key[0..16]);
         const k1 = AesBlock.fromBytes(key[16..32]);
         const zero = AesBlock.fromBytes(&([_]u8{0} ** 16));
