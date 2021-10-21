@@ -225,7 +225,7 @@ test "basic test" {
     try testing.expectEqual(m[0], 0x41);
 }
 
-test "test vector" {
+test "test vector 1" {
     const key = [_]u8{0} ** 32;
     const nonce = [_]u8{0} ** 16;
     const ad = [_]u8{0} ** 32;
@@ -235,6 +235,21 @@ test "test vector" {
     _ = try fmt.hexToBytes(&expected_tag, "cc728c8baedd36f14cf8938e9e0719bf");
     var expected_c: [m.len]u8 = undefined;
     _ = try fmt.hexToBytes(&expected_c, "15892f8555ad2db4749b90926571c4b8c28b434f277793c53833cb6e41a855291784a2c7fe374b34d875fdcbe84f5b88bf3f386f2218f046a84318565026d755");
+    Rocca.encrypt(&m, &tag, &m, &ad, nonce, key);
+    try testing.expectEqualSlices(u8, &tag, &expected_tag);
+    try testing.expectEqualSlices(u8, &m, &expected_c);
+}
+
+test "test vector 2" {
+    const key = [_]u8{1} ** 32;
+    const nonce = [_]u8{1} ** 16;
+    const ad = [_]u8{1} ** 32;
+    var m = [_]u8{0} ** 64;
+    var tag: [Rocca.tag_length]u8 = undefined;
+    var expected_tag: [Rocca.tag_length]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_tag, "bad0a53616599bfdb553788fdaabad78");
+    var expected_c: [m.len]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_c, "f931a8730b2e8a3af341c83a29c30525325c170326c29d91b24d714fecf385fd88e650ef2e2c02b37b19e70bb93ff82aa96d50c9fdf05343f6e36b66ee7bda69");
     Rocca.encrypt(&m, &tag, &m, &ad, nonce, key);
     try testing.expectEqualSlices(u8, &tag, &expected_tag);
     try testing.expectEqualSlices(u8, &m, &expected_c);
