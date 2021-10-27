@@ -74,7 +74,7 @@ const State = struct {
         state.update(msg0, msg1);
     }
 
-    fn decLast(state: *State, dst: []u8, src: *const [32]u8) void {
+    fn decPartial(state: *State, dst: []u8, src: *const [32]u8) void {
         const blocks = &state.blocks;
         const c0 = AesBlock.fromBytes(src[0..16]);
         const c1 = AesBlock.fromBytes(src[16..32]);
@@ -177,7 +177,7 @@ pub const Rocca = struct {
         if (m.len % 32 != 0) {
             mem.set(u8, src[0..], 0);
             mem.copy(u8, src[0 .. m.len % 32], c[i .. i + m.len % 32]);
-            state.decLast(m[i .. i + m.len % 32], &src);
+            state.decPartial(m[i .. i + m.len % 32], &src);
         }
         const computed_tag = state.mac(ad.len, m.len);
         var acc: u8 = 0;
