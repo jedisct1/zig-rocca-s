@@ -24,6 +24,16 @@ Benchmark results on aarch64 (VM on a Freebox Delta home router)
             rocca:       2291 MiB/s (18 Gb/s)
 ```
 
+On Rocket Lake (Xeon E-2386G), AEGIS-128L still outperforms ROCCA:
+
+```text
+       aes128-ocb:      10173 MiB/s
+       aes256-ocb:       7792 MiB/s
+        aegis-256:      11775 MiB/s
+            rocca:      16274 MiB/s
+       aegis-128l:      21206 MiB/s (170 Gb/s)
+```
+
 **Warning:** this implementation is for benchmarking and testing purposes only.
 
 ROCCA is a newly proposed scheme, and hasn't received any serious attention yet.
