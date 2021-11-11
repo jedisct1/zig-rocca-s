@@ -26,12 +26,21 @@ Benchmark results on aarch64 (VM on a Freebox Delta home router)
 
 On Rocket Lake (Xeon E-2386G), AEGIS-128L still outperforms ROCCA:
 
+Zig benchmarks:
+
 ```text
        aes128-ocb:      10173 MiB/s
        aes256-ocb:       7792 MiB/s
         aegis-256:      11775 MiB/s
             rocca:      16274 MiB/s
        aegis-128l:      21206 MiB/s (170 Gb/s)
+```
+
+OpenSSL 3.0.0 AES-GCM benchmark on the same machine:
+
+```text
+       aes256-gcm:       7483 MiB/s
+       aes256-gcm:       8772 MiB/s
 ```
 
 **Warning:** this implementation is for benchmarking and testing purposes only.
