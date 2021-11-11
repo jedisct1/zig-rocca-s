@@ -39,8 +39,8 @@ Zig benchmarks:
 OpenSSL 3.0.0 AES-GCM benchmark on the same machine:
 
 ```text
+       aes128-gcm:       8772 MiB/s
        aes256-gcm:       7483 MiB/s
-       aes256-gcm:       8772 MiB/s
 ```
 
 **Warning:** this implementation is for benchmarking and testing purposes only.
