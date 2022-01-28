@@ -252,3 +252,38 @@ test "test vector 2" {
     try testing.expectEqualSlices(u8, &tag, &expected_tag);
     try testing.expectEqualSlices(u8, &m, &expected_c);
 }
+
+test "test vector 3" {
+    var key: [32]u8 = undefined;
+    _ = try fmt.hexToBytes(&key, "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
+    var nonce: [16]u8 = undefined;
+    _ = try fmt.hexToBytes(&nonce, "0123456789abcdef0123456789abcdef");
+    var ad: [32]u8 = undefined;
+    _ = try fmt.hexToBytes(&ad, "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
+    var m = [_]u8{0} ** 64;
+    var tag: [Rocca.tag_length]u8 = undefined;
+    var expected_tag: [Rocca.tag_length]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_tag, "6672534a8b57c287bcf56823cd1cdb5a");
+    var expected_c: [m.len]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_c, "265b7e314141fd148235a5305b217ab291a2a7aeff91efd3ac603b28e0576109723422ef3f553b0b07ce7263f63502a00591de648f3ee3b05441d8313b138b5a");
+    Rocca.encrypt(&m, &tag, &m, &ad, nonce, key);
+    try testing.expectEqualSlices(u8, &tag, &expected_tag);
+    try testing.expectEqualSlices(u8, &m, &expected_c);
+}
+
+test "test vector 4" {
+    const key = [_]u8{0x11} ** 16 ++ [_]u8{0x22} ** 16;
+    const nonce = [_]u8{0x44} ** 16;
+    var ad: [18]u8 = undefined;
+    _ = try fmt.hexToBytes(&ad, "808182838485868788898a8b8c8d8e8f9091");
+    var m: [64]u8 = undefined;
+    _ = try fmt.hexToBytes(&m, "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f");
+    var tag: [Rocca.tag_length]u8 = undefined;
+    var expected_tag: [Rocca.tag_length]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_tag, "a9f2069456559de3e69d233e154ba05e");
+    var expected_c: [m.len]u8 = undefined;
+    _ = try fmt.hexToBytes(&expected_c, "d9b3361abb733958fa2830b8ec374e2835c5d29aae867efbd4f6a874cc24c6c66acab1020ac2344b3eb78efe54b5a0b6f19d1bea7dbf47f1d6c966a04a3e7692");
+    Rocca.encrypt(&m, &tag, &m, &ad, nonce, key);
+    try testing.expectEqualSlices(u8, &tag, &expected_tag);
+    try testing.expectEqualSlices(u8, &m, &expected_c);
+}
