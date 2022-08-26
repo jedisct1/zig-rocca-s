@@ -1,8 +1,8 @@
-# ROCCA: an efficient AES-based encryption scheme
+# ROCCA-S: an efficient AES-based encryption scheme
 
-This is an implementation of [ROCCA: an efficient AES-based encryption scheme for beyond 5G](https://tosc.iacr.org/index.php/ToSC/article/view/8904), a very fast authenticated encryption scheme optimized for platforms with AES-NI or ARM crypto extensions.
+This is an implementation of [ROCCA-S: an efficient AES-based encryption scheme for beyond 5G](https://www.ietf.org/archive/id/draft-nakano-rocca-s-01.html), a very fast authenticated encryption scheme optimized for platforms with AES-NI or ARM crypto extensions.
 
-ROCCA is key committing, has a 256 bit key size, a 128 bit nonce, processes 256 bit message blocks and outputs a 128 bit authentication tag.
+ROCCA is key committing, has a 256 bit key size, a 128 bit nonce, processes 256 bit message blocks and outputs a 256 bit authentication tag.
 
 Benchmark results on x86_64 (Macbook Pro, 2,4 GHz Core i9, single core):
 
@@ -45,6 +45,6 @@ OpenSSL 3.0.0 AES-GCM benchmark on the same machine:
 
 **Warning:** this implementation is for benchmarking and testing purposes only.
 
-ROCCA is a newly proposed scheme, and hasn't received any serious attention yet.
+ROCCA-S is a newly proposed scheme, and hasn't received any serious attention yet.
 
-AEGIS should always be preferred over ROCCA for any actual use.
+AEGIS should always be preferred over ROCCA-S for any actual use.
