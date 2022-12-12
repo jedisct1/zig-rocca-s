@@ -35,6 +35,13 @@ const State = struct {
         while (i < rounds) : (i += 1) {
             state.update(z0, z1);
         }
+        state.blocks[0] = state.blocks[0].xorBlocks(k0);
+        state.blocks[1] = state.blocks[1].xorBlocks(k0);
+        state.blocks[2] = state.blocks[2].xorBlocks(k1);
+        state.blocks[3] = state.blocks[3].xorBlocks(k0);
+        state.blocks[4] = state.blocks[4].xorBlocks(k0);
+        state.blocks[5] = state.blocks[5].xorBlocks(k1);
+        state.blocks[6] = state.blocks[6].xorBlocks(k1);
         return state;
     }
 
@@ -248,9 +255,9 @@ test "test vector 2" {
     var m = [_]u8{0} ** 64;
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_tag, "8c6e84a97d9c729a1d291bafae1fe82aca97fd9b3a80256a4d57a18bd3d15951");
+    _ = try fmt.hexToBytes(&expected_tag, "b730e6b619f63ccf7e69735914d76ab52f70360c8a654bad991320ef952c40a2");
     var expected_c: [m.len]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_c, "6f983ab45ff43b83d91b0c393b91df3d339fc7811568af8bdbc6c3fa02519caa9514054c70bd4c45ea047ac196f880d19025fbbea500c83bf484acc396c36193");
+    _ = try fmt.hexToBytes(&expected_c, "559ecb253bcfe26b483bf00e9c748345978ff921036a6c1fdcb712172836504fbc64d430a73fc67acd3c3b9c1976d80790f48357e7fe0c0682624569d3a658fb");
     RoccaS.encrypt(&m, &tag, &m, &ad, nonce, key);
     try testing.expectEqualSlices(u8, &tag, &expected_tag);
     try testing.expectEqualSlices(u8, &m, &expected_c);
@@ -266,9 +273,9 @@ test "test vector 3" {
     var m = [_]u8{0} ** 64;
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_tag, "80adbd5b4d3913d0e4b6938c5bac3cc20d67a85e0a93e6f92ecfe5f328ae44ff");
+    _ = try fmt.hexToBytes(&expected_tag, "326e6357e50034a7750fc20131aa6f7619ed23db5bdad0002820cc707f359f8d");
     var expected_c: [m.len]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_c, "8638fdd10710982215671146036e9f74bc15c4279de4f8d983c376dd5a8908a1ef5b5aceabaaa7e8e7d4db8119e206ec215172bed7dfeb5ad5501a6b33f5b94b");
+    _ = try fmt.hexToBytes(&expected_c, "b5fc4e2a72b86d1a133c0f0202bdf790af14a24b2cdb676e427865e12fcc9d3021d18418fc75dc1912dd2cd79a3beeb2a98b235de2299b9dda93fd2b5ac8f436");
     RoccaS.encrypt(&m, &tag, &m, &ad, nonce, key);
     try testing.expectEqualSlices(u8, &tag, &expected_tag);
     try testing.expectEqualSlices(u8, &m, &expected_c);
@@ -283,9 +290,9 @@ test "test vector 4" {
     _ = try fmt.hexToBytes(&m, "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f");
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_tag, "3fe3ca4f00b8e0f3f5cf049454678439fae5ff079c863ccc0948513e21d2409d");
+    _ = try fmt.hexToBytes(&expected_tag, "f2b872fb4ed431c6e4912b171889a6b1586d663ed49e580f8f2519b563daac2a");
     var expected_c: [m.len]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_c, "8627c5771a07ea4e5bdb278c81e97da7d56fbb0870c04e93ffc273ac8015b9d6dbacd40417a4512c9e49cea2d4844f53ee1c862e8b742cf8c4cd30569d5b563d");
+    _ = try fmt.hexToBytes(&expected_c, "e28d9f86288f77115d4ef620e7cedecee4d7de0fce38a9061f813c9805bc1ea7fdf6709eabcfcf75801649edc063579ea08cc645f5197c7ded9c99115775369f");
     RoccaS.encrypt(&m, &tag, &m, &ad, nonce, key);
     try testing.expectEqualSlices(u8, &tag, &expected_tag);
     try testing.expectEqualSlices(u8, &m, &expected_c);
