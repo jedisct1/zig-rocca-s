@@ -191,7 +191,7 @@ pub const RoccaS = struct {
         }
         const computed_tag = state.mac(ad.len, m.len);
         var acc: u8 = 0;
-        for (computed_tag) |_, j| {
+        for (computed_tag, 0..) |_, j| {
             acc |= (computed_tag[j] ^ tag[j]);
         }
         if (acc != 0) {
