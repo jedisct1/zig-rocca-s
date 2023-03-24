@@ -8,8 +8,6 @@ const AuthenticationError = std.crypto.errors.AuthenticationError;
 
 const State = struct {
     blocks: [7]AesBlock,
-    k0: AesBlock,
-    k1: AesBlock,
 
     const rounds = 16;
 
@@ -30,7 +28,7 @@ const State = struct {
             nonce_block.xorBlocks(k1),
             zero,
         };
-        var state = State{ .blocks = blocks, .k0 = k0, .k1 = k1 };
+        var state = State{ .blocks = blocks };
         var i: usize = 0;
         while (i < rounds) : (i += 1) {
             state.update(z0, z1);
@@ -97,8 +95,6 @@ const State = struct {
 
     fn mac(state: *State, adlen: usize, mlen: usize) [32]u8 {
         var blocks = &state.blocks;
-        blocks[1] = blocks[1].xorBlocks(state.k0);
-        blocks[2] = blocks[2].xorBlocks(state.k1);
         var adlen_bytes: [16]u8 = undefined;
         var mlen_bytes: [16]u8 = undefined;
         mem.writeIntLittle(u128, &adlen_bytes, adlen * 8);
@@ -121,7 +117,7 @@ const State = struct {
 /// It has a 256 bit key, a 128 bit nonce, and processes 256 bit message blocks.
 /// It was designed to fully exploit the parallelism and built-in AES support of recent Intel and ARM CPUs.
 ///
-/// https://www.ietf.org/archive/id/draft-nakano-rocca-s-01.html
+/// https://www.ietf.org/archive/id/draft-nakano-rocca-s-03.html
 pub const RoccaS = struct {
     pub const tag_length = 32;
     pub const nonce_length = 16;
@@ -255,7 +251,7 @@ test "test vector 2" {
     var m = [_]u8{0} ** 64;
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_tag, "b730e6b619f63ccf7e69735914d76ab52f70360c8a654bad991320ef952c40a2");
+    _ = try fmt.hexToBytes(&expected_tag, "c1fdf39762eca77da8b0f1dae5fff75a92fb0adfa7940a28c8cadbbbe8e4ca8d");
     var expected_c: [m.len]u8 = undefined;
     _ = try fmt.hexToBytes(&expected_c, "559ecb253bcfe26b483bf00e9c748345978ff921036a6c1fdcb712172836504fbc64d430a73fc67acd3c3b9c1976d80790f48357e7fe0c0682624569d3a658fb");
     RoccaS.encrypt(&m, &tag, &m, &ad, nonce, key);
@@ -273,7 +269,7 @@ test "test vector 3" {
     var m = [_]u8{0} ** 64;
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_tag, "326e6357e50034a7750fc20131aa6f7619ed23db5bdad0002820cc707f359f8d");
+    _ = try fmt.hexToBytes(&expected_tag, "a078e1351ef2420c8e3a93fd31f5b1135b15315a5f205534148efbcd63f79f00");
     var expected_c: [m.len]u8 = undefined;
     _ = try fmt.hexToBytes(&expected_c, "b5fc4e2a72b86d1a133c0f0202bdf790af14a24b2cdb676e427865e12fcc9d3021d18418fc75dc1912dd2cd79a3beeb2a98b235de2299b9dda93fd2b5ac8f436");
     RoccaS.encrypt(&m, &tag, &m, &ad, nonce, key);
@@ -290,7 +286,7 @@ test "test vector 4" {
     _ = try fmt.hexToBytes(&m, "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f");
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
-    _ = try fmt.hexToBytes(&expected_tag, "f2b872fb4ed431c6e4912b171889a6b1586d663ed49e580f8f2519b563daac2a");
+    _ = try fmt.hexToBytes(&expected_tag, "e16bae2feff540be2b4ce999d440bc730b7e332e25b6ce4e1a9785b95f6eb1cd");
     var expected_c: [m.len]u8 = undefined;
     _ = try fmt.hexToBytes(&expected_c, "e28d9f86288f77115d4ef620e7cedecee4d7de0fce38a9061f813c9805bc1ea7fdf6709eabcfcf75801649edc063579ea08cc645f5197c7ded9c99115775369f");
     RoccaS.encrypt(&m, &tag, &m, &ad, nonce, key);
