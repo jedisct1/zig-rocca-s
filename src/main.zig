@@ -88,8 +88,8 @@ const State = struct {
         var padded: [32]u8 = undefined;
         padded[0..16].* = msg0.toBytes();
         padded[16..32].* = msg1.toBytes();
-        mem.set(u8, padded[dst.len..], 0);
-        mem.copy(u8, dst, padded[0..dst.len]);
+        @memset(padded[dst.len..], 0);
+        @memcpy(dst, padded[0..dst.len]);
         state.update(AesBlock.fromBytes(padded[0..16]), AesBlock.fromBytes(padded[16..32]));
     }
 
@@ -139,8 +139,8 @@ pub const RoccaS = struct {
             state.enc(&dst, ad[i..][0..32]);
         }
         if (ad.len % 32 != 0) {
-            mem.set(u8, src[0..], 0);
-            mem.copy(u8, src[0 .. ad.len % 32], ad[i .. i + ad.len % 32]);
+            @memset(src[0..], 0);
+            @memcpy(src[0 .. ad.len % 32], ad[i .. i + ad.len % 32]);
             state.enc(&dst, &src);
         }
         i = 0;
@@ -148,10 +148,10 @@ pub const RoccaS = struct {
             state.enc(c[i..][0..32], m[i..][0..32]);
         }
         if (m.len % 32 != 0) {
-            mem.set(u8, src[0..], 0);
-            mem.copy(u8, src[0 .. m.len % 32], m[i .. i + m.len % 32]);
+            @memset(src[0..], 0);
+            @memcpy(src[0 .. m.len % 32], m[i .. i + m.len % 32]);
             state.enc(&dst, &src);
-            mem.copy(u8, c[i .. i + m.len % 32], dst[0 .. m.len % 32]);
+            @memcpy(c[i .. i + m.len % 32], dst[0 .. m.len % 32]);
         }
         tag.* = state.mac(ad.len, m.len);
     }
@@ -172,8 +172,8 @@ pub const RoccaS = struct {
             state.enc(&dst, ad[i..][0..32]);
         }
         if (ad.len % 32 != 0) {
-            mem.set(u8, src[0..], 0);
-            mem.copy(u8, src[0 .. ad.len % 32], ad[i .. i + ad.len % 32]);
+            @memset(src[0..], 0);
+            @memcpy(src[0 .. ad.len % 32], ad[i .. i + ad.len % 32]);
             state.enc(&dst, &src);
         }
         i = 0;
@@ -181,8 +181,8 @@ pub const RoccaS = struct {
             state.dec(m[i..][0..32], c[i..][0..32]);
         }
         if (m.len % 32 != 0) {
-            mem.set(u8, src[0..], 0);
-            mem.copy(u8, src[0 .. m.len % 32], c[i .. i + m.len % 32]);
+            @memset(src[0..], 0);
+            @memcpy(src[0 .. m.len % 32], c[i .. i + m.len % 32]);
             state.decPartial(m[i .. i + m.len % 32], &src);
         }
         const computed_tag = state.mac(ad.len, m.len);
@@ -191,7 +191,7 @@ pub const RoccaS = struct {
             acc |= (computed_tag[j] ^ tag[j]);
         }
         if (acc != 0) {
-            mem.set(u8, m, 0xaa);
+            @memset(m, 0xaa);
             return error.AuthenticationFailed;
         }
     }
@@ -219,7 +219,7 @@ test "basic test" {
     const allocator = std.testing.allocator;
     var m = try allocator.alloc(u8, mlen);
     defer allocator.free(m);
-    mem.set(u8, m[0..], 0x41);
+    @memset(m[0..], 0x41);
 
     RoccaS.encrypt(m[0..], &tag, m[0..], "associated data", nonce, key);
     try RoccaS.decrypt(m[0..], m[0..], tag, "associated data", nonce, key);
