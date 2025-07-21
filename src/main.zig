@@ -97,8 +97,8 @@ const State = struct {
         var blocks = &state.blocks;
         var adlen_bytes: [16]u8 = undefined;
         var mlen_bytes: [16]u8 = undefined;
-        mem.writeIntLittle(u128, &adlen_bytes, adlen * 8);
-        mem.writeIntLittle(u128, &mlen_bytes, mlen * 8);
+        mem.writeInt(u128, &adlen_bytes, adlen * 8, .little);
+        mem.writeInt(u128, &mlen_bytes, mlen * 8, .little);
         const adlen_block = AesBlock.fromBytes(&adlen_bytes);
         const mlen_block = AesBlock.fromBytes(&mlen_bytes);
         var i: usize = 0;
