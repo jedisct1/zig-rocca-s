@@ -23,4 +23,4 @@ Running on modern hardware with AES acceleration (Apple Silicon M4):
 
 As shown in the results, the performance asymmetry becomes more pronounced with larger message sizes, with decryption being up to 1.7x slower than encryption for 64 KB messages.
 
-If your application requires consistent performance for both encryption and decryption operations, consider using AEGIS or other symmetric AEAD schemes instead.
+If your application requires consistent performance for both encryption and decryption operations, consider using another symmetric AEAD scheme.
