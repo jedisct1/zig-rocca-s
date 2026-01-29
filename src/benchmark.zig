@@ -1,11 +1,13 @@
 const std = @import("std");
+const Io = std.Io;
 const rocca = @import("rocca.zig");
 const RoccaS = rocca.RoccaS;
 
-pub fn main() !void {
-    const stdout_file = std.fs.File.stdout().deprecatedWriter();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+pub fn main(init: std.process.Init) !void {
+    const io = init.io;
+    var stdout_buffer: [4096]u8 = undefined;
+    var stdout_file_writer: Io.File.Writer = .init(.stdout(), io, &stdout_buffer);
+    const stdout = &stdout_file_writer.interface;
 
     const key = [_]u8{0} ** 32;
     const nonce = [_]u8{0} ** 16;
@@ -67,5 +69,5 @@ pub fn main() !void {
         try stdout.print("\n", .{});
     }
 
-    try bw.flush();
+    try stdout.flush();
 }
