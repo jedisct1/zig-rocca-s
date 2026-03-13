@@ -33,24 +33,29 @@ pub fn main(init: std.process.Init) !void {
         const iterations: usize = if (size <= 1024) 100000 else if (size <= 16384) 10000 else 1000;
 
         // Benchmark encryption
-        var enc_timer = try std.time.Timer.start();
+        const enc_start = Io.Timestamp.now(io, .awake);
         var i: usize = 0;
         while (i < iterations) : (i += 1) {
             RoccaS.encrypt(ciphertext, &tag, message, associated_data, nonce, key);
         }
-        const enc_time = enc_timer.read();
+        const enc_end = Io.Timestamp.now(io, .awake);
+        const enc_time = enc_start.durationTo(enc_end).nanoseconds;
 
         // Benchmark decryption
-        var dec_timer = try std.time.Timer.start();
+        const dec_start = Io.Timestamp.now(io, .awake);
         i = 0;
         while (i < iterations) : (i += 1) {
             try RoccaS.decrypt(message, ciphertext, tag, associated_data, nonce, key);
         }
-        const dec_time = dec_timer.read();
+        const dec_end = Io.Timestamp.now(io, .awake);
+        const dec_time = dec_start.durationTo(dec_end).nanoseconds;
 
         // Calculate throughput in bits/second
-        const enc_throughput = (@as(f64, @floatFromInt(size * iterations * 8)) * 1_000_000_000.0) / @as(f64, @floatFromInt(enc_time));
-        const dec_throughput = (@as(f64, @floatFromInt(size * iterations * 8)) * 1_000_000_000.0) / @as(f64, @floatFromInt(dec_time));
+        const total_bits: f64 = @floatFromInt(size * iterations * 8);
+        const enc_ns: f64 = @floatFromInt(enc_time);
+        const dec_ns: f64 = @floatFromInt(dec_time);
+        const enc_throughput = total_bits * 1_000_000_000.0 / enc_ns;
+        const dec_throughput = total_bits * 1_000_000_000.0 / dec_ns;
 
         // Format throughput with appropriate units (Mbps or Gbps)
         const enc_display = if (enc_throughput >= 1_000_000_000.0)
@@ -64,8 +69,8 @@ pub fn main(init: std.process.Init) !void {
             .{ dec_throughput / 1_000_000.0, "Mbps" };
 
         try stdout.print("Size: {d} bytes\n", .{size});
-        try stdout.print("  Encryption: {d:.2} {s} ({d} iterations in {d:.2} ms)\n", .{ enc_display[0], enc_display[1], iterations, @as(f64, @floatFromInt(enc_time)) / 1_000_000.0 });
-        try stdout.print("  Decryption: {d:.2} {s} ({d} iterations in {d:.2} ms)\n", .{ dec_display[0], dec_display[1], iterations, @as(f64, @floatFromInt(dec_time)) / 1_000_000.0 });
+        try stdout.print("  Encryption: {d:.2} {s} ({d} iterations in {d:.2} ms)\n", .{ enc_display[0], enc_display[1], iterations, enc_ns / 1_000_000.0 });
+        try stdout.print("  Decryption: {d:.2} {s} ({d} iterations in {d:.2} ms)\n", .{ dec_display[0], dec_display[1], iterations, dec_ns / 1_000_000.0 });
         try stdout.print("\n", .{});
     }
 
