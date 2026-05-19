@@ -16,7 +16,7 @@ const State = struct {
         const z1 = AesBlock.fromBytes(&[_]u8{ 188, 219, 137, 129, 165, 219, 181, 233, 47, 59, 77, 236, 207, 251, 192, 181 });
         const k0 = AesBlock.fromBytes(key[0..16]);
         const k1 = AesBlock.fromBytes(key[16..32]);
-        const zero = AesBlock.fromBytes(&([_]u8{0} ** 16));
+        const zero = AesBlock.fromBytes(&@as([16]u8, @splat(0)));
         const nonce_block = AesBlock.fromBytes(&nonce);
 
         const blocks = [7]AesBlock{

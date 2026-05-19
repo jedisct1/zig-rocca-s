@@ -9,8 +9,8 @@ pub fn main(init: std.process.Init) !void {
     var stdout_file_writer: Io.File.Writer = .init(.stdout(), io, &stdout_buffer);
     const stdout = &stdout_file_writer.interface;
 
-    const key = [_]u8{0} ** 32;
-    const nonce = [_]u8{0} ** 16;
+    const key: [32]u8 = @splat(0);
+    const nonce: [16]u8 = @splat(0);
     const associated_data = "benchmark associated data";
 
     const sizes = [_]usize{ 64, 256, 1024, 4096, 16384, 65536 };

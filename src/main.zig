@@ -6,8 +6,8 @@ const RoccaS = rocca.RoccaS;
 const testing = std.testing;
 
 test "empty test" {
-    const key = [_]u8{0} ** 32;
-    const nonce = [_]u8{0} ** 16;
+    const key: [32]u8 = @splat(0);
+    const nonce: [16]u8 = @splat(0);
     var c = [_]u8{};
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
@@ -17,8 +17,8 @@ test "empty test" {
 }
 
 test "basic test" {
-    const key = [_]u8{0} ** 32;
-    const nonce = [_]u8{0} ** 16;
+    const key: [32]u8 = @splat(0);
+    const nonce: [16]u8 = @splat(0);
     const mlen = 1000;
     var tag: [RoccaS.tag_length]u8 = undefined;
 
@@ -36,10 +36,10 @@ test "basic test" {
 }
 
 test "test vector 1" {
-    const key = [_]u8{0} ** 32;
-    const nonce = [_]u8{0} ** 16;
-    const ad = [_]u8{0} ** 32;
-    var m = [_]u8{0} ** 64;
+    const key: [32]u8 = @splat(0);
+    const nonce: [16]u8 = @splat(0);
+    const ad: [32]u8 = @splat(0);
+    var m: [64]u8 = @splat(0);
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
     _ = try fmt.hexToBytes(&expected_tag, "8df934d1483710c9410f6a089c4ced9791901b7e2e661206202db2cc7a24a386");
@@ -51,10 +51,10 @@ test "test vector 1" {
 }
 
 test "test vector 2" {
-    const key = [_]u8{1} ** 32;
-    const nonce = [_]u8{1} ** 16;
-    const ad = [_]u8{1} ** 32;
-    var m = [_]u8{0} ** 64;
+    const key: [32]u8 = @splat(1);
+    const nonce: [16]u8 = @splat(1);
+    const ad: [32]u8 = @splat(1);
+    var m: [64]u8 = @splat(0);
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
     _ = try fmt.hexToBytes(&expected_tag, "c1fdf39762eca77da8b0f1dae5fff75a92fb0adfa7940a28c8cadbbbe8e4ca8d");
@@ -72,7 +72,7 @@ test "test vector 3" {
     _ = try fmt.hexToBytes(&nonce, "0123456789abcdef0123456789abcdef");
     var ad: [32]u8 = undefined;
     _ = try fmt.hexToBytes(&ad, "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
-    var m = [_]u8{0} ** 64;
+    var m: [64]u8 = @splat(0);
     var tag: [RoccaS.tag_length]u8 = undefined;
     var expected_tag: [RoccaS.tag_length]u8 = undefined;
     _ = try fmt.hexToBytes(&expected_tag, "a078e1351ef2420c8e3a93fd31f5b1135b15315a5f205534148efbcd63f79f00");
@@ -84,8 +84,8 @@ test "test vector 3" {
 }
 
 test "test vector 4" {
-    const key = [_]u8{0x11} ** 16 ++ [_]u8{0x22} ** 16;
-    const nonce = [_]u8{0x44} ** 16;
+    const key = @as([16]u8, @splat(0x11)) ++ @as([16]u8, @splat(0x22));
+    const nonce: [16]u8 = @splat(0x44);
     var ad: [18]u8 = undefined;
     _ = try fmt.hexToBytes(&ad, "808182838485868788898a8b8c8d8e8f9091");
     var m: [64]u8 = undefined;
